@@ -213,6 +213,20 @@ async function runTests() {
     assert(unknownRoute.status === 404, `Ruta inexistente responde 404`);
     assert(unknownRoute.body.error === 'not_found', `error es 'not_found'`);
 
+    // ==========================================
+    // 10. Página de inicio y OpenAPI YAML
+    // ==========================================
+    console.log('\n--- 10. Pruebas de Página de Inicio (Landing Page) ---');
+    const homeRes = await request(app).get('/');
+    assert(homeRes.status === 200, `GET / responde 200`);
+    assert(homeRes.headers['content-type'].includes('text/html'), `GET / devuelve text/html`);
+    assert(homeRes.text.includes('Microservicio de Promociones'), `HTML contiene el título del microservicio`);
+    assert(homeRes.text.includes('Explorador Interactivo'), `HTML contiene la sección interactiva`);
+
+    const yamlRes = await request(app).get('/openapi.yaml');
+    assert(yamlRes.status === 200, `GET /openapi.yaml responde 200`);
+    assert(yamlRes.text.includes('openapi: 3.0.3'), `GET /openapi.yaml contiene la especificación`);
+
     console.log(`\n==========================================`);
     console.log(`Resultados: ${passed} pasados, ${failed} fallados.`);
     if (failed > 0) {
